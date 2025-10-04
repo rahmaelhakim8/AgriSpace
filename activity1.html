@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriSpace</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- <link rel="stylesheet" href="style.css"> -->
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -26,8 +25,7 @@
     }
 
     /* Navbar */
-    header
-  {
+    header {
       width: 90%;
       background: rgba(255,255,255,0.7); 
       display: flex;
@@ -41,19 +39,17 @@
       z-index: 1000;
       border-radius: 12px;
       backdrop-filter: blur(5px);
-  }
+    }
     .logo {
       font-size: 24px;
       font-weight: bold;
       color: #e74c3c;
     }
-
     nav {
       display: flex;
       gap: 25px;
       align-items: center;
     }
-
     nav a {
       text-decoration: none;
       color: #333;
@@ -61,13 +57,16 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 8px 15px;
+      border-radius: 8px;
       transition: 0.3s;
+      cursor: pointer;
+    }
+    nav a:hover {
+      color: white;
     }
 
-    nav a:hover {
-      color: #e74c3c;
-    }
-  .navbar #Welcome-text 
+    .navbar #Welcome-text 
   {
     margin-left: 25px;
     font-style: italic;
@@ -76,7 +75,13 @@
     gap: 8px;
   }
 
-  #profile-pic img {
+  .character.selected img {
+  border-color: #00ffcc; /* لون مميز */
+  transform: scale(1.15);
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+}
+
+#profile-pic img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -90,6 +95,7 @@
   font-weight: bold;
   color: #333;
 }
+
     /* Hero Section */
 .hero {
   position: relative;
@@ -107,8 +113,6 @@
   font-size: 2.2rem;
   font-weight: bold;
   margin-bottom: 15px;
-  padding-top: 70px;
-  /* margin-top: -20px; */
   color: #ffdd57;
 }
 
@@ -142,18 +146,13 @@
   transform: scale(1.05);
 }
 
-.hero a {
-  text-decoration: none;
-  font-weight: bold;
-}
-
 
     /* الصور تحت الأزرار */
     .images-container {
       display: flex;
       justify-content: space-between;
-      width: 60%;
-      margin-top: -120px;
+      width: 40%;
+      margin-top: 40px;
       z-index: 1;
     }
     .images-container img {
@@ -171,18 +170,18 @@
   <div class="overlay"></div>
 
   <!-- Navbar -->
-    <header>
-  <div class="logo">AgriSpace</div>
-  <nav>
-    <a href="home.html"><i class="fa-solid fa-house"></i> Home</a>
-    <a href="Games.html"><i class="fa-solid fa-gamepad"></i> Games</a>
-    <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
-    <a href="Contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
-    <span id="profile-pic"></span>
-    <span id="Welcome-text">Hi User, welcome on board 🚀</span>
-  </nav>
-</header>
-
+  <header>
+    <div class="logo">AgriSpace</div>
+    <nav>
+      <!-- خليت الـ Home يشغّل الصوت -->
+      <a href="#" onclick="playMusic()"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="#"><i class="fa-solid fa-gamepad"></i> Games</a>
+      <a href="#"><i class="fa-solid fa-circle-info"></i> About</a>
+      <a href="#"><i class="fa-solid fa-envelope"></i> Contact</a>
+     <span id="profile-pic"></span>
+      <span id="Welcome-text">Hi User, welcome on board 🚀</span>
+    </nav>
+  </header>
 
   <!-- Hero Section -->
   <div class="hero">
@@ -190,60 +189,43 @@
     <h3>Farmers and ranchers care for the environment every day. Gather information and use important tools to help the soil and water thrive on the farm!</h3>
 
     <!-- خليت بس زرار واحد للـ play -->
-    <a href="letsPlayGame1.html" class="btn">Let's Play</a>
-    <a href="learnHowTOPlayGame1.html" class="btn">Learn How to Play</a>
+    <button class="btn" onclick="window.open('letsPlayGame1.html', '_blank')">Let's play</button>
+    <button class="btn" onclick="window.open('learnHowTOPlayGame1.html', '_blank')">Learn How to Play</button>
 
-
-
-  <audio id="bg-music" loop>
+<audio id="bg-music" loop>
   <source src="Audio_background.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-  const audio = document.getElementById("bg-music")
-
+  const audio = document.getElementById("bg-music");
 
   function playMusic() {
-    try {
-      localStorage.setItem("music", "playing");
-      const p = audio.play();
-      if (p && typeof p.then === "function") {
-        return p.catch(err => {
-          console.warn("audio.play() rejected:", err);
-        });
-      }
-      return Promise.resolve();
-    } catch (err) {
-      console.warn("playMusic error:", err);
-      return Promise.resolve();
+    const promise = audio.play();
+    if (promise !== undefined) {
+      promise.then(() => {
+        console.log("Music started 🎵");
+        localStorage.setItem("music", "playing");
+      }).catch(err => {
+        console.warn("Autoplay blocked:", err);
+      });
     }
   }
 
-  // دالة لتشغيل الصوت
-   document.getElementById("playBtn").addEventListener("click", () => {
-    playMusic().finally(() => {
-      // قبل التنقل ممكن تتأكدي من وجود الملف
-      console.log("Going to play page...");
-      window.location.href = "letsPlayGame1.html";
-    });
+  // تشغيل الصوت عند أول ضغطة في الصفحة
+  document.body.addEventListener("click", () => {
+    if (localStorage.getItem("music") !== "playing") {
+      playMusic();
+    }
+  }, { once: true });
+
+  // تشغيله تلقائي لو كان شغال قبل كده
+  window.addEventListener("load", () => {
+    if (localStorage.getItem("music") === "playing") {
+      playMusic();
+    }
   });
-
-  // document.getElementById("learnBtn").addEventListener("click", () => {
-  //   playMusic().finally(() => {
-  //     console.log("Going to learn page...");
-  //     window.location.href = "learnHowTOPlayGame1.html";
-  //   });
-  // });
-
-  // window.addEventListener("load", () => {
-  //   if (localStorage.getItem("music") === "playing") {
-  //     playMusic();
-  //   }
-  // });
-
-  // لو داخل الصفحة والصوت شغال من قبل كدا نشغله تاني
-  
 </script>
+
 
 
     <!-- الصور -->
@@ -253,6 +235,8 @@
     </div>
     
   </div>
+  
+
   <script src="script.js"></script>
 </body>
 </html>
